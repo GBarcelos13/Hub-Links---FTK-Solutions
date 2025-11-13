@@ -7,9 +7,9 @@ export default function Dashboard() {
     links
   } = useLinks();
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
-      <Header />
+      <Header className="bg-gray-950" />
       
-      <main className="container mx-auto px-4 py-16 flex-1">
+      <main className="container mx-auto px-4 py-16 flex-1 bg-gray-50">
         <div className="max-w-5xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-16">
@@ -47,6 +47,6 @@ export default function Dashboard() {
         </div>
       </main>
 
-      <Footer />
+      <Footer className="bg-gray-950" />
     </div>;
 }
