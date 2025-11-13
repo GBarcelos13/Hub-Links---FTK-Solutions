@@ -29,9 +29,19 @@ export default function Dashboard() {
 
           {/* Links Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
-            {links.map((link) => (
-              <LinkButton key={link.id} name={link.name} url={link.url} />
-            ))}
+            {links.map((link, index) => {
+              const isLastAndOdd = links.length % 2 !== 0 && index === links.length - 1;
+              return (
+                <div
+                  key={link.id}
+                  className={isLastAndOdd ? "md:col-span-2 flex justify-center" : ""}
+                >
+                  <div className={isLastAndOdd ? "w-full max-w-sm" : "w-full"}>
+                    <LinkButton name={link.name} url={link.url} />
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {links.length === 0 && (
