@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { useLinks } from '@/contexts/LinksContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -39,7 +40,7 @@ export default function Admin() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
@@ -155,6 +156,8 @@ export default function Admin() {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

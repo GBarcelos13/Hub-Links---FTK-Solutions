@@ -11,13 +11,13 @@ export function LinkButton({ name, url }: LinkButtonProps) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative w-full"
+      className="group relative w-full transform transition-all duration-200 hover:scale-[1.02]"
     >
-      <div className="flex items-center justify-center gap-3 h-14 px-6 bg-link-button border-2 border-link-button-border rounded-xl transition-all duration-200 hover:bg-link-button-hover hover:border-primary/30 hover:shadow-md">
-        <span className="text-sm font-semibold tracking-wide text-link-button-text uppercase">
+      <div className="flex items-center justify-center gap-3 h-16 px-8 bg-link-button border-2 border-link-button-border rounded-2xl transition-all duration-200 hover:bg-link-button-hover hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+        <span className="text-sm font-bold tracking-widest text-link-button-text uppercase">
           {name}
         </span>
-        <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+        <ExternalLink className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
       </div>
     </a>
   );
