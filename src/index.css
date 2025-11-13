@@ -50,6 +50,15 @@ All colors MUST be HSL.
     --link-button-hover: 221 83% 97%;
     --link-button-text: 222 47% 11%;
 
+    /* Header and Footer - harmonized with logo */
+    --header-bg: 221 83% 53%;
+    --header-fg: 0 0% 100%;
+    --header-border: 221 83% 45%;
+    
+    --footer-bg: 222 47% 11%;
+    --footer-fg: 210 40% 98%;
+    --footer-border: 222 47% 20%;
+
     /* Smooth transitions */
     --transition: all 0.2s ease;
   }
@@ -88,6 +97,14 @@ All colors MUST be HSL.
     --link-button-border: 217 33% 25%;
     --link-button-hover: 217 33% 20%;
     --link-button-text: 210 40% 98%;
+    
+    --header-bg: 221 83% 45%;
+    --header-fg: 0 0% 100%;
+    --header-border: 221 83% 35%;
+    
+    --footer-bg: 222 47% 8%;
+    --footer-fg: 210 40% 98%;
+    --footer-border: 222 47% 15%;
   }
 }
 

@@ -54,6 +54,16 @@ export default {
           hover: "hsl(var(--link-button-hover))",
           text: "hsl(var(--link-button-text))",
         },
+        'header': {
+          bg: "hsl(var(--header-bg))",
+          fg: "hsl(var(--header-fg))",
+          border: "hsl(var(--header-border))",
+        },
+        'footer': {
+          bg: "hsl(var(--footer-bg))",
+          fg: "hsl(var(--footer-fg))",
+          border: "hsl(var(--footer-border))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
