@@ -20,8 +20,7 @@ export function Footer() {
                 <Mail className="h-4 w-4" />
                 contato@voicemanager.com.br
               </a>
-              <a href="tel:+551140405050" className="flex items-center gap-2 text-sm text-footer-fg/70 hover:text-footer-fg transition-colors">
-                <Phone className="h-4 w-4" />
+              <a href="tel:+551140405050" className="flex items-center gap-2 text-sm text-footer-fg/70 hover:text-footer-fg transition-colors">0800 580 5811<Phone className="h-4 w-4" />
                 (11) 4040-5050
               </a>
             </div>
@@ -32,7 +31,8 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-footer-fg mb-3">Localização</h3>
             <div className="flex items-start gap-2 text-sm text-footer-fg/70">
               <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-              <span>São Paulo, SP<br />Brasil</span>
+              <span>Belo Horizonte, MG
+Brasil<br />Brasil</span>
             </div>
           </div>
         </div>
