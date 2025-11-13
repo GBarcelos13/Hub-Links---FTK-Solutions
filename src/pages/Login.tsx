@@ -6,16 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import logo from '@/assets/voicemanager-logo.png';
-
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const {
+    login
+  } = useAuth();
   const navigate = useNavigate();
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (login(username, password)) {
       toast.success('Login realizado com sucesso!');
       navigate('/dashboard');
@@ -23,9 +22,7 @@ export default function Login() {
       toast.error('Credenciais inválidas');
     }
   };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+  return <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -39,29 +36,15 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="username">Usuário</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Digite seu usuário"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
+              <Input id="username" type="text" placeholder="Digite seu usuário" value={username} onChange={e => setUsername(e.target.value)} required />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Digite sua senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <Input id="password" type="password" placeholder="Digite sua senha" value={password} onChange={e => setPassword(e.target.value)} required />
             </div>
 
-            <Button type="submit" className="w-full" size="lg">
+            <Button type="submit" size="lg" className="w-full text-slate-100 bg-zinc-950 hover:bg-zinc-800">
               Entrar
             </Button>
           </form>
@@ -75,6 +58,5 @@ export default function Login() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
