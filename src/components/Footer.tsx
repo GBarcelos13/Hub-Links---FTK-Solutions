@@ -1,0 +1,71 @@
+import { Mail, Phone, MapPin } from 'lucide-react';
+
+export function Footer() {
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <footer className="w-full border-t border-border bg-card mt-auto">
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+          {/* Company Info */}
+          <div>
+            <h3 className="text-sm font-semibold text-foreground mb-3">VoiceManager</h3>
+            <p className="text-sm text-muted-foreground">
+              Plataforma completa para gerenciamento de comunicações empresariais.
+            </p>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="text-sm font-semibold text-foreground mb-3">Contato</h3>
+            <div className="space-y-2">
+              <a 
+                href="mailto:contato@voicemanager.com.br" 
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                <Mail className="h-4 w-4" />
+                contato@voicemanager.com.br
+              </a>
+              <a 
+                href="tel:+551140405050" 
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                <Phone className="h-4 w-4" />
+                (11) 4040-5050
+              </a>
+            </div>
+          </div>
+
+          {/* Location */}
+          <div>
+            <h3 className="text-sm font-semibold text-foreground mb-3">Localização</h3>
+            <div className="flex items-start gap-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+              <span>São Paulo, SP<br />Brasil</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="pt-6 border-t border-border">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-muted-foreground">
+              © {currentYear} VoiceManager. Todos os direitos reservados.
+            </p>
+            <div className="flex gap-6">
+              <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                Privacidade
+              </a>
+              <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                Termos de Uso
+              </a>
+              <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                Suporte
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
