@@ -1,11 +1,8 @@
 import { Mail, Phone, MapPin } from 'lucide-react';
-
 export function Footer() {
   const currentYear = new Date().getFullYear();
-
-  return (
-    <footer className="w-full border-t-2 border-footer-border bg-footer-bg mt-auto">
-      <div className="container mx-auto px-4 py-8">
+  return <footer className="w-full border-t-2 border-footer-border bg-footer-bg mt-auto">
+      <div className="container mx-auto px-4 py-8 bg-gray-950">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
           {/* Company Info */}
           <div>
@@ -19,17 +16,11 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-footer-fg mb-3">Contato</h3>
             <div className="space-y-2">
-              <a 
-                href="mailto:contato@voicemanager.com.br" 
-                className="flex items-center gap-2 text-sm text-footer-fg/70 hover:text-footer-fg transition-colors"
-              >
+              <a href="mailto:contato@voicemanager.com.br" className="flex items-center gap-2 text-sm text-footer-fg/70 hover:text-footer-fg transition-colors">
                 <Mail className="h-4 w-4" />
                 contato@voicemanager.com.br
               </a>
-              <a 
-                href="tel:+551140405050" 
-                className="flex items-center gap-2 text-sm text-footer-fg/70 hover:text-footer-fg transition-colors"
-              >
+              <a href="tel:+551140405050" className="flex items-center gap-2 text-sm text-footer-fg/70 hover:text-footer-fg transition-colors">
                 <Phone className="h-4 w-4" />
                 (11) 4040-5050
               </a>
@@ -66,6 +57,5 @@ export function Footer() {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 }
