@@ -20,11 +20,6 @@ export default function Admin() {
   const [newLinkName, setNewLinkName] = useState('');
   const [newLinkUrl, setNewLinkUrl] = useState('');
 
-  if (!isAdmin) {
-    navigate('/dashboard');
-    return null;
-  }
-
   const handleAddLink = (e: React.FormEvent) => {
     e.preventDefault();
     
