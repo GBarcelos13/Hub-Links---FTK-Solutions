@@ -3,11 +3,13 @@ import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/voicemanager-logo.webp';
-
 export function Header() {
-  const { user, signOut, isAdmin } = useSupabaseAuth();
+  const {
+    user,
+    signOut,
+    isAdmin
+  } = useSupabaseAuth();
   const navigate = useNavigate();
-  
   const handleLogout = async () => {
     await signOut();
     navigate('/auth');
@@ -20,10 +22,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
             <img src={logo} alt="VoiceManager" className="h-12 w-12" />
-            <div>
-              <h1 className="text-xl font-bold text-header-fg">VoiceManager</h1>
-              <p className="text-xs text-header-fg/80">Hub de Links</p>
-            </div>
+            
           </div>
         </div>
 

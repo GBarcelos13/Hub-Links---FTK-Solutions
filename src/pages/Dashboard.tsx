@@ -2,16 +2,15 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { LinkButton } from '@/components/LinkButton';
 import { useLinks } from '@/hooks/useLinks';
-
 export default function Dashboard() {
-  const { links, loading } = useLinks();
-
+  const {
+    links,
+    loading
+  } = useLinks();
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+      </div>;
   }
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
       <Header />
@@ -23,8 +22,8 @@ export default function Dashboard() {
             <div className="inline-block mb-4">
               
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
-              Ferramentas Voicemanager
+            <h2 className="text-4xl text-foreground mb-4 tracking-tight md:text-4xl font-normal">
+              Hub de links Voicemanager
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Suas ferramentas essenciais organizadas em um só lugar
