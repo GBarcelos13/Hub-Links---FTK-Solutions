@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import logo from '@/assets/voicemanager-logo.png';
+import logo from '@/assets/voicemanager-logo.webp';
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
