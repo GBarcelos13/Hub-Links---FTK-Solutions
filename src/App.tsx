@@ -3,10 +3,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { LinksProvider } from "@/contexts/LinksContext";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import Login from "./pages/Login";
+import { SupabaseAuthProvider } from "./contexts/SupabaseAuthContext";
+import { SupabaseProtectedRoute } from "./components/SupabaseProtectedRoute";
+import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -18,33 +17,31 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <LinksProvider>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute>
-                    <Admin />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/" element={<Navigate to="/login" replace />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </LinksProvider>
-        </AuthProvider>
-      </BrowserRouter>
+      <SupabaseAuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+            <Route 
+              path="/dashboard" 
+              element={
+                <SupabaseProtectedRoute>
+                  <Dashboard />
+                </SupabaseProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <SupabaseProtectedRoute>
+                  <Admin />
+                </SupabaseProtectedRoute>
+              } 
+            />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </SupabaseAuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

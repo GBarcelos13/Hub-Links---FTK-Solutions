@@ -2,18 +2,20 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { useLinks } from '@/contexts/LinksContext';
-import { useAuth } from '@/contexts/AuthContext';
+import { useLinks } from '@/hooks/useLinks';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trash2, Plus, ExternalLink, ArrowLeft } from 'lucide-react';
-import { toast } from 'sonner';
+import { ArrowLeft, Plus } from 'lucide-react';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { DraggableLinkItem } from '@/components/DraggableLinkItem';
 
 export default function Admin() {
-  const { links, addLink, removeLink } = useLinks();
-  const { isAdmin } = useAuth();
+  const { links, addLink, removeLink, reorderLinks, canEditLink, isAdmin } = useLinks();
+  const { user } = useSupabaseAuth();
   const navigate = useNavigate();
   const [newLinkName, setNewLinkName] = useState('');
   const [newLinkUrl, setNewLinkUrl] = useState('');
@@ -30,13 +32,23 @@ export default function Admin() {
       addLink(newLinkName, newLinkUrl);
       setNewLinkName('');
       setNewLinkUrl('');
-      toast.success('Link adicionado com sucesso!');
     }
   };
 
   const handleRemoveLink = (id: string, name: string) => {
     removeLink(id);
-    toast.success(`${name} removido com sucesso!`);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = links.findIndex((link) => link.id === active.id);
+      const newIndex = links.findIndex((link) => link.id === over.id);
+
+      const newLinks = arrayMove(links, oldIndex, newIndex);
+      reorderLinks(newLinks);
+    }
   };
 
   return (
@@ -113,44 +125,36 @@ export default function Admin() {
               <CardHeader>
                 <CardTitle>Links Atuais</CardTitle>
                 <CardDescription>
-                  {links.length} {links.length === 1 ? 'link disponível' : 'links disponíveis'}
+                  {links.length} {links.length === 1 ? 'link disponível' : 'links disponíveis'} - Arraste para reordenar
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {links.map((link) => (
-                    <div
-                      key={link.id}
-                      className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border"
+                {links.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Nenhum link cadastrado ainda
+                  </div>
+                ) : (
+                  <DndContext
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={links.map(l => l.id)}
+                      strategy={verticalListSortingStrategy}
                     >
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <ExternalLink className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <p className="font-semibold text-foreground truncate">
-                            {link.name}
-                          </p>
-                          <p className="text-sm text-muted-foreground truncate">
-                            {link.url}
-                          </p>
-                        </div>
+                      <div className="space-y-3">
+                        {links.map((link) => (
+                          <DraggableLinkItem
+                            key={link.id}
+                            link={link}
+                            canEdit={canEditLink(link)}
+                            onRemove={handleRemoveLink}
+                          />
+                        ))}
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveLink(link.id, link.name)}
-                        className="flex-shrink-0 ml-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-
-                  {links.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      Nenhum link cadastrado ainda
-                    </div>
-                  )}
-                </div>
+                    </SortableContext>
+                  </DndContext>
+                )}
               </CardContent>
             </Card>
           </div>
