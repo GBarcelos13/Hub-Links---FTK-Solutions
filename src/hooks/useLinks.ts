@@ -15,6 +15,8 @@ export interface Link {
 
 export function useLinks() {
   const [links, setLinks] = useState<Link[]>([]);
+  const [localLinks, setLocalLinks] = useState<Link[]>([]);
+  const [hasChanges, setHasChanges] = useState(false);
   const [loading, setLoading] = useState(true);
   const { user, isAdmin } = useSupabaseAuth();
 
@@ -32,6 +34,8 @@ export function useLinks() {
       console.error(error);
     } else {
       setLinks(data || []);
+      setLocalLinks(data || []);
+      setHasChanges(false);
     }
     setLoading(false);
   };
@@ -107,16 +111,26 @@ export function useLinks() {
     }
   };
 
-  const reorderLinks = async (reorderedLinks: Link[]) => {
-    // Update local state immediately (optimistic update)
-    setLinks(reorderedLinks);
-    
+  const reorderLinks = (reorderedLinks: Link[]) => {
+    // Update only local state, don't save to database yet
+    setLocalLinks(reorderedLinks);
+    setHasChanges(true);
+  };
+
+  const saveLinkOrder = async () => {
     // Update all links with new order in database
-    const updates = reorderedLinks.map((link, index) => 
+    const updates = localLinks.map((link, index) => 
       updateLinkOrder(link.id, index)
     );
 
     await Promise.all(updates);
+    setHasChanges(false);
+    toast.success('Ordem dos links salva com sucesso!');
+  };
+
+  const cancelReorder = () => {
+    setLocalLinks(links);
+    setHasChanges(false);
   };
 
   const canEditLink = (link: Link) => {
@@ -124,11 +138,14 @@ export function useLinks() {
   };
 
   return {
-    links,
+    links: localLinks,
     loading,
     addLink,
     removeLink,
     reorderLinks,
+    saveLinkOrder,
+    cancelReorder,
+    hasChanges,
     canEditLink,
     isAdmin
   };

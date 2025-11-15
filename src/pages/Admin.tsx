@@ -14,7 +14,7 @@ import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-ki
 import { DraggableLinkItem } from '@/components/DraggableLinkItem';
 
 export default function Admin() {
-  const { links, addLink, removeLink, reorderLinks, canEditLink, isAdmin } = useLinks();
+  const { links, addLink, removeLink, reorderLinks, saveLinkOrder, cancelReorder, hasChanges, canEditLink, isAdmin } = useLinks();
   const { user } = useSupabaseAuth();
   const navigate = useNavigate();
   const [newLinkName, setNewLinkName] = useState('');
@@ -118,10 +118,31 @@ export default function Admin() {
             {/* Links List */}
             <Card>
               <CardHeader>
-                <CardTitle>Links Atuais</CardTitle>
-                <CardDescription>
-                  {links.length} {links.length === 1 ? 'link disponível' : 'links disponíveis'} - Arraste para reordenar
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Links Atuais</CardTitle>
+                    <CardDescription>
+                      {links.length} {links.length === 1 ? 'link disponível' : 'links disponíveis'} - Arraste para reordenar
+                    </CardDescription>
+                  </div>
+                  {hasChanges && (
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={cancelReorder}
+                        size="sm"
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        onClick={saveLinkOrder}
+                        size="sm"
+                      >
+                        Salvar Ordem
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </CardHeader>
               <CardContent>
                 {links.length === 0 ? (
