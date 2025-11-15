@@ -2,7 +2,7 @@ import { User, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import logo from '@/assets/voicemanager-logo.png';
+import logo from '@/assets/voicemanager-logo.webp';
 export function Header() {
   const {
     user,
