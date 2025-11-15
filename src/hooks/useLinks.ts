@@ -108,7 +108,10 @@ export function useLinks() {
   };
 
   const reorderLinks = async (reorderedLinks: Link[]) => {
-    // Update all links with new order
+    // Update local state immediately (optimistic update)
+    setLinks(reorderedLinks);
+    
+    // Update all links with new order in database
     const updates = reorderedLinks.map((link, index) => 
       updateLinkOrder(link.id, index)
     );
