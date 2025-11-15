@@ -49,8 +49,30 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    // Subscribe to user_roles changes to update admin status in real-time
+    const rolesChannel = supabase
+      .channel('user-roles-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_roles'
+        },
+        (payload) => {
+          // Re-check admin status when roles change
+          if (user?.id) {
+            checkAdminRole(user.id);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+      supabase.removeChannel(rolesChannel);
+    };
+  }, [user?.id]);
 
   const checkAdminRole = async (userId: string) => {
     const { data, error } = await supabase
@@ -60,11 +82,13 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
       .eq('role', 'admin')
       .maybeSingle();
 
-    if (!error && data) {
-      setIsAdmin(true);
-    } else {
+    if (error) {
+      console.error('Error checking admin role:', error);
       setIsAdmin(false);
+      return;
     }
+
+    setIsAdmin(!!data);
   };
 
   const signUp = async (email: string, password: string) => {
