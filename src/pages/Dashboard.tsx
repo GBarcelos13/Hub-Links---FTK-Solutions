@@ -1,11 +1,18 @@
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { LinkButton } from '@/components/LinkButton';
-import { useLinks } from '@/contexts/LinksContext';
+import { useLinks } from '@/hooks/useLinks';
+
 export default function Dashboard() {
-  const {
-    links
-  } = useLinks();
+  const { links, loading } = useLinks();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
       <Header />
       

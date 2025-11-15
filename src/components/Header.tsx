@@ -1,18 +1,16 @@
 import { User, LogOut, Settings } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/voicemanager-logo.webp';
+
 export function Header() {
-  const {
-    user,
-    logout,
-    isAdmin
-  } = useAuth();
+  const { user, signOut, isAdmin } = useSupabaseAuth();
   const navigate = useNavigate();
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/auth');
   };
   const handleAdminClick = () => {
     navigate('/admin');
@@ -39,7 +37,7 @@ export function Header() {
             <div className="h-9 w-9 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/30">
               <User className="h-5 w-5 text-header-fg" />
             </div>
-            <span className="hidden sm:inline font-medium text-header-fg">{user?.username}</span>
+            <span className="hidden sm:inline font-medium text-header-fg">{user?.email}</span>
           </div>
 
           <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2 text-header-fg hover:bg-white/10 hover:text-header-fg">
