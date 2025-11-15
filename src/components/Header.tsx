@@ -28,10 +28,10 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-4">
-          {isAdmin && <Button variant="ghost" size="sm" onClick={handleAdminClick} className="gap-2 text-header-fg hover:bg-white/10 hover:text-header-fg">
-              <Settings className="h-4 w-4" />
-              Gerenciar
-            </Button>}
+          <Button variant="ghost" size="sm" onClick={handleAdminClick} className="gap-2 text-header-fg hover:bg-white/10 hover:text-header-fg">
+            <Settings className="h-4 w-4" />
+            Gerenciar
+          </Button>
           
           <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/10">
             <div className="h-9 w-9 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/30">
