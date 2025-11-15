@@ -2,7 +2,7 @@ import { User, LogOut, Settings } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import logo from '@/assets/voicemanager-logo.webp';
+import logo from '@/assets/voicemanager-logo-new.jpeg';
 export function Header() {
   const {
     user,
@@ -21,7 +21,7 @@ export function Header() {
       <div className="container mx-auto px-4 h-20 flex items-center justify-between bg-gray-950">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
-            <img src={logo} alt="VoiceManager" className="h-12 w-12" />
+            <img src={logo} alt="VoiceManager" className="h-16 w-auto" />
             
           </div>
         </div>
