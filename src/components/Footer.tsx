@@ -24,10 +24,7 @@ export function Footer() {
                 <Phone className="h-4 w-4" />
                 0800 580 5811
               </a>
-              <a href="tel:+551140405050" className="flex items-center gap-2 text-sm text-footer-fg/70 hover:text-footer-fg transition-colors">
-                <Phone className="h-4 w-4" />
-                (11) 4040-5050
-              </a>
+              
             </div>
           </div>
 
