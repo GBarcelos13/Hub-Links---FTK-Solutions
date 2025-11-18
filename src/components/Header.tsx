@@ -17,8 +17,8 @@ export function Header() {
   const handleAdminClick = () => {
     navigate('/admin');
   };
-  return <header className="w-full border-b-2 border-header-border bg-header-bg sticky top-0 z-50 shadow-md">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between bg-gray-950">
+  return <header className="w-full border-b-2 border-header-border bg-gray-950 sticky top-0 z-50 shadow-md">
+      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
             <img src={logo} alt="VoiceManager" className="h-16 w-auto" />
