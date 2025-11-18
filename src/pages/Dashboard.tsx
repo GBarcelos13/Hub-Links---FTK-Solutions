@@ -1,6 +1,7 @@
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { LinkButton } from '@/components/LinkButton';
+import { FirstLoginDialog } from '@/components/FirstLoginDialog';
 import { useLinks } from '@/hooks/useLinks';
 export default function Dashboard() {
   const {
@@ -13,6 +14,7 @@ export default function Dashboard() {
       </div>;
   }
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
+      <FirstLoginDialog />
       <Header />
       
       <main className="container mx-auto px-4 py-16 flex-1 bg-gray-50">
