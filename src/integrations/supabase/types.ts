@@ -47,6 +47,7 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string | null
+          first_login: boolean | null
           id: string
           updated_at: string | null
           user_id: string
@@ -54,6 +55,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          first_login?: boolean | null
           id?: string
           updated_at?: string | null
           user_id: string
@@ -61,6 +63,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          first_login?: boolean | null
           id?: string
           updated_at?: string | null
           user_id?: string
