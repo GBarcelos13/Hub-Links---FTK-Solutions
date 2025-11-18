@@ -15,13 +15,14 @@ export function FirstLoginDialog() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     checkFirstLogin();
   }, [user]);
 
   const checkFirstLogin = async () => {
-    if (!user) return;
+    if (!user || isCompleted) return;
 
     try {
       const { data, error } = await supabase
@@ -32,7 +33,7 @@ export function FirstLoginDialog() {
 
       if (error) throw error;
 
-      if (data?.first_login) {
+      if (data?.first_login === true) {
         setShowDialog(true);
       }
     } catch (error) {
@@ -72,6 +73,7 @@ export function FirstLoginDialog() {
       if (profileError) throw profileError;
 
       toast.success('Senha alterada com sucesso!');
+      setIsCompleted(true);
       setShowDialog(false);
       setShowHint(true);
       
