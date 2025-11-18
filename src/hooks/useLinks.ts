@@ -2,6 +2,22 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+const linkSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, "Nome é obrigatório")
+    .max(100, "Nome muito longo (máximo 100 caracteres)"),
+  url: z.string()
+    .trim()
+    .url("Formato de URL inválido")
+    .max(2000, "URL muito longa (máximo 2000 caracteres)")
+    .refine(
+      (url) => url.startsWith('http://') || url.startsWith('https://'),
+      "URL deve começar com http:// ou https://"
+    )
+});
 
 export interface Link {
   id: string;
@@ -62,6 +78,13 @@ export function useLinks() {
 
   const addLink = async (name: string, url: string) => {
     if (!user) return;
+
+    // Validate input
+    const validation = linkSchema.safeParse({ name, url });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
 
     const maxOrder = links.length > 0 ? Math.max(...links.map(l => l.display_order)) : -1;
 
