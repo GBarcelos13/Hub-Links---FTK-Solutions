@@ -13,15 +13,15 @@ import { corsHeaders } from '../_shared/cors.ts';
 // @ts-expect-error — Deno global
 const env = (k: string) => Deno.env.get(k) ?? '';
 
-const stripe = new Stripe(env('STRIPE_SECRET_KEY'), { apiVersion: '2024-06-20' });
-
-const PRICE_MAP: Record<string, string> = {
-  pro:   env('STRIPE_PRICE_PRO'),
-  elite: env('STRIPE_PRICE_ELITE'),
-};
-
 serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+
+  // Lidos a cada request para garantir que os secrets estão disponíveis
+  const stripe = new Stripe(env('STRIPE_SECRET_KEY'), { apiVersion: '2024-06-20' });
+  const PRICE_MAP: Record<string, string> = {
+    pro:   env('STRIPE_PRICE_PRO'),
+    elite: env('STRIPE_PRICE_ELITE'),
+  };
 
   try {
     const authHeader = req.headers.get('Authorization');

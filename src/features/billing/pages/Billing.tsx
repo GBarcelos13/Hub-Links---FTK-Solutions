@@ -53,7 +53,15 @@ export default function Billing() {
     setLoadingPlan(target);
     try {
       const { data, error } = await supabase.functions.invoke('stripe-checkout', { body: { plan: target } });
-      if (error) throw error;
+      if (error) {
+        // Tenta extrair o erro real da resposta da função
+        let detail = (error as { message?: string }).message || 'Erro ao iniciar checkout';
+        try {
+          const body = await (error as { context?: Response }).context?.json?.();
+          if (body?.error) detail = body.error;
+        } catch { /* ignora */ }
+        throw new Error(detail);
+      }
       if (data?.url) window.location.href = data.url;
     } catch (err) {
       toast.error((err as Error).message || 'Erro ao iniciar checkout');
@@ -66,7 +74,14 @@ export default function Billing() {
     setLoadingPortal(true);
     try {
       const { data, error } = await supabase.functions.invoke('stripe-portal', {});
-      if (error) throw error;
+      if (error) {
+        let detail = (error as { message?: string }).message || 'Erro ao abrir portal';
+        try {
+          const body = await (error as { context?: Response }).context?.json?.();
+          if (body?.error) detail = body.error;
+        } catch { /* ignora */ }
+        throw new Error(detail);
+      }
       if (data?.url) window.location.href = data.url;
     } catch (err) {
       toast.error((err as Error).message || 'Erro ao abrir portal');
