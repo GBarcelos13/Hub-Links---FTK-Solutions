@@ -24,6 +24,7 @@ import { useSubscription } from '@/features/billing/hooks/useSubscription';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Star, Search, X, Sparkles, Inbox, Sun, Moon, Plus } from 'lucide-react';
+import { ViewSizeSelector, type ViewSize } from '@/features/links/components/ViewSizeSelector';
 import { useTheme } from '@/contexts/ThemeContext';
 import { COLOR_CLASSES } from '@/features/categories/lib/category-palette';
 import { cn } from '@/lib/utils';
@@ -32,22 +33,27 @@ import {
   PointerSensor, useSensor, useSensors, pointerWithin,
 } from '@dnd-kit/core';
 
+const gridClasses: Record<ViewSize, string> = {
+  compact: 'grid-cols-1 md:grid-cols-3',
+  normal:  'grid-cols-1 md:grid-cols-2',
+  large:   'grid-cols-1',
+};
+
 function LinkGrid({
-  items,
-  toggleFavorite,
-  onEdit,
-  onRemove,
+  items, toggleFavorite, onEdit, onRemove, size,
 }: {
   items: Link[];
   toggleFavorite: (id: string) => void;
   onEdit: (link: Link) => void;
   onRemove: (link: Link) => void;
+  size: ViewSize;
 }) {
   if (items.length === 0) return null;
+  const isNormal = size === 'normal';
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+    <div className={`grid gap-4 max-w-3xl mx-auto ${gridClasses[size]}`}>
       {items.map((link, index) => {
-        const isLastAndOdd = items.length % 2 !== 0 && index === items.length - 1;
+        const isLastAndOdd = isNormal && items.length % 2 !== 0 && index === items.length - 1;
         return (
           <div key={link.id} className={isLastAndOdd ? 'md:col-span-2 flex justify-center' : ''}>
             <div className={isLastAndOdd ? 'w-full max-w-sm' : 'w-full'}>
@@ -60,6 +66,7 @@ function LinkGrid({
                 onToggleFavorite={() => toggleFavorite(link.id)}
                 onEdit={() => onEdit(link)}
                 onRemove={() => onRemove(link)}
+                size={size}
               />
             </div>
           </div>
@@ -94,6 +101,15 @@ export default function Dashboard() {
   const [searchParams] = useSearchParams();
   const view = useMemo(() => parseView(searchParams.get('view')), [searchParams]);
   const [draggingLinkId, setDraggingLinkId] = useState<string | null>(null);
+  const [viewSize, setViewSize] = useState<ViewSize>(() => {
+    const saved = localStorage.getItem('hub-links-view-size');
+    return (saved as ViewSize) || 'normal';
+  });
+
+  const handleViewSize = (s: ViewSize) => {
+    setViewSize(s);
+    localStorage.setItem('hub-links-view-size', s);
+  };
   const [editingLink,   setEditingLink]   = useState<Link | null>(null);
   const [deletingLink,  setDeletingLink]  = useState<Link | null>(null);
   const [editName,      setEditName]      = useState('');
@@ -241,6 +257,7 @@ export default function Dashboard() {
                 {view.kind === 'uncategorized' && <Inbox className="h-4 w-4 text-muted-foreground" />}
                 <h1 className="text-sm font-display font-700">{pageTitle}</h1>
               </div>
+              <ViewSizeSelector value={viewSize} onChange={handleViewSize} />
               <Button asChild size="sm" className="gap-1.5 font-display font-700 btn-glow">
                 <RouterLink to="/admin">
                   <Plus className="h-4 w-4" />
@@ -302,7 +319,7 @@ export default function Dashboard() {
                           <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                           <h3 className="text-lg font-semibold text-foreground">Favoritos</h3>
                         </div>
-                        <LinkGrid items={favoriteLinks} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} />
+                        <LinkGrid items={favoriteLinks} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} size={viewSize} />
                       </section>
                     )}
 
@@ -314,7 +331,7 @@ export default function Dashboard() {
                         return (
                           <section key={cat.id} className="mb-12">
                             <CategoryHeader category={cat} />
-                            <LinkGrid items={items} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} />
+                            <LinkGrid items={items} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} size={viewSize} />
                           </section>
                         );
                       })}
@@ -325,14 +342,14 @@ export default function Dashboard() {
                           <Inbox className="h-5 w-5 text-muted-foreground" />
                           <h3 className="text-lg font-semibold text-foreground">Sem categoria</h3>
                         </div>
-                        <LinkGrid items={grouped.uncategorized} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} />
+                        <LinkGrid items={grouped.uncategorized} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} size={viewSize} />
                       </section>
                     )}
                   </>
                 )}
 
                 {view.kind !== 'all' && (
-                  <LinkGrid items={filtered} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} />
+                  <LinkGrid items={filtered} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} size={viewSize} />
                 )}
 
                 {filtered.length === 0 && links.length > 0 && (

@@ -1,6 +1,7 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { LinkButton } from '@/features/links/components/LinkButton';
+import type { ViewSize } from '@/features/links/components/ViewSizeSelector';
 import { GripVertical, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
@@ -19,10 +20,11 @@ type Props = {
   onToggleFavorite?: () => void;
   onEdit?: () => void;
   onRemove?: () => void;
+  size?: ViewSize;
 };
 
 export function DraggableLinkCard({
-  id, name, url, description, isFavorite, onToggleFavorite, onEdit, onRemove,
+  id, name, url, description, isFavorite, onToggleFavorite, onEdit, onRemove, size = 'normal',
 }: Props) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `${LINK_DRAG_PREFIX}${id}`,
@@ -60,6 +62,7 @@ export function DraggableLinkCard({
         description={description}
         isFavorite={isFavorite}
         onToggleFavorite={onToggleFavorite}
+        size={size}
       />
 
       {/* Actions menu */}
