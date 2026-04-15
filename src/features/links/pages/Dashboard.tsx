@@ -14,7 +14,7 @@ import { useSubscription } from '@/features/billing/hooks/useSubscription';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Star, Search, X, Sparkles, Inbox, Sun, Moon } from 'lucide-react';
+import { Star, Search, X, Sparkles, Inbox, Sun, Moon, Plus } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { COLOR_CLASSES } from '@/features/categories/lib/category-palette';
 import { cn } from '@/lib/utils';
@@ -208,6 +208,12 @@ export default function Dashboard() {
                 {view.kind === 'uncategorized' && <Inbox className="h-4 w-4 text-muted-foreground" />}
                 <h1 className="text-sm font-display font-700">{pageTitle}</h1>
               </div>
+              <Button asChild size="sm" className="gap-1.5 font-display font-700 btn-glow">
+                <RouterLink to="/admin">
+                  <Plus className="h-4 w-4" />
+                  Adicionar link
+                </RouterLink>
+              </Button>
               <button
                 onClick={toggle}
                 className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
