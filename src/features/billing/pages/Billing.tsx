@@ -54,16 +54,24 @@ export default function Billing() {
     try {
       const { data, error } = await supabase.functions.invoke('stripe-checkout', { body: { plan: target } });
       if (error) {
-        // Tenta extrair o erro real da resposta da função
+        console.error('[stripe-checkout] raw error:', error);
         let detail = (error as { message?: string }).message || 'Erro ao iniciar checkout';
         try {
-          const body = await (error as { context?: Response }).context?.json?.();
-          if (body?.error) detail = body.error;
-        } catch { /* ignora */ }
+          const ctx = (error as { context?: Response }).context;
+          if (ctx) {
+            const text = await ctx.text();
+            console.error('[stripe-checkout] response body:', text);
+            const body = JSON.parse(text);
+            if (body?.error) detail = body.error;
+          }
+        } catch (parseErr) {
+          console.error('[stripe-checkout] parse error:', parseErr);
+        }
         throw new Error(detail);
       }
       if (data?.url) window.location.href = data.url;
     } catch (err) {
+      console.error('[stripe-checkout] caught:', err);
       toast.error((err as Error).message || 'Erro ao iniciar checkout');
     } finally {
       setLoadingPlan(null);
