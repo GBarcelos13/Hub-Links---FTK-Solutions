@@ -11,7 +11,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     const stored = localStorage.getItem('hub-theme');
     if (stored === 'light' || stored === 'dark') return stored;
-    return 'dark';
+    return 'light';
   });
 
   useEffect(() => {
