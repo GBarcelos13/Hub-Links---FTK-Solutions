@@ -4,6 +4,16 @@ import { OnboardingDialog } from '@/features/auth/components/OnboardingDialog';
 import { LinkButton } from '@/features/links/components/LinkButton';
 import { DraggableLinkCard, LINK_DRAG_PREFIX } from '@/features/links/components/DraggableLinkCard';
 import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
   AppSidebar, parseView, CATEGORY_DROP_PREFIX, UNCATEGORIZED_DROP_ID,
 } from '@/features/categories/components/AppSidebar';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -11,7 +21,6 @@ import { Footer } from '@/shared/components/Footer';
 import { useLinks, type Link } from '@/features/links/hooks/useLinks';
 import { useCategories, type Category } from '@/features/categories/hooks/useCategories';
 import { useSubscription } from '@/features/billing/hooks/useSubscription';
-import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Star, Search, X, Sparkles, Inbox, Sun, Moon, Plus } from 'lucide-react';
@@ -26,9 +35,13 @@ import {
 function LinkGrid({
   items,
   toggleFavorite,
+  onEdit,
+  onRemove,
 }: {
   items: Link[];
   toggleFavorite: (id: string) => void;
+  onEdit: (link: Link) => void;
+  onRemove: (link: Link) => void;
 }) {
   if (items.length === 0) return null;
   return (
@@ -45,6 +58,8 @@ function LinkGrid({
                 description={link.description}
                 isFavorite={link.is_favorite}
                 onToggleFavorite={() => toggleFavorite(link.id)}
+                onEdit={() => onEdit(link)}
+                onRemove={() => onRemove(link)}
               />
             </div>
           </div>
@@ -71,7 +86,7 @@ function CategoryHeader({ category }: { category: Category }) {
 }
 
 export default function Dashboard() {
-  const { links, loading, toggleFavorite, moveLinkToCategory } = useLinks();
+  const { links, loading, toggleFavorite, moveLinkToCategory, removeLink, updateLink } = useLinks();
   const { categories, loading: loadingCategories } = useCategories();
   const { plan, limits } = useSubscription();
   const { theme, toggle } = useTheme();
@@ -79,10 +94,28 @@ export default function Dashboard() {
   const [searchParams] = useSearchParams();
   const view = useMemo(() => parseView(searchParams.get('view')), [searchParams]);
   const [draggingLinkId, setDraggingLinkId] = useState<string | null>(null);
+  const [editingLink,   setEditingLink]   = useState<Link | null>(null);
+  const [deletingLink,  setDeletingLink]  = useState<Link | null>(null);
+  const [editName,      setEditName]      = useState('');
+  const [editUrl,       setEditUrl]       = useState('');
+  const [editDesc,      setEditDesc]      = useState('');
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
+
+  const openEdit = (link: Link) => {
+    setEditingLink(link);
+    setEditName(link.name);
+    setEditUrl(link.url);
+    setEditDesc(link.description ?? '');
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingLink) return;
+    await updateLink(editingLink.id, editName, editUrl, editDesc);
+    setEditingLink(null);
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
     const idStr = String(event.active.id);
@@ -269,7 +302,7 @@ export default function Dashboard() {
                           <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                           <h3 className="text-lg font-semibold text-foreground">Favoritos</h3>
                         </div>
-                        <LinkGrid items={favoriteLinks} toggleFavorite={toggleFavorite} />
+                        <LinkGrid items={favoriteLinks} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} />
                       </section>
                     )}
 
@@ -281,7 +314,7 @@ export default function Dashboard() {
                         return (
                           <section key={cat.id} className="mb-12">
                             <CategoryHeader category={cat} />
-                            <LinkGrid items={items} toggleFavorite={toggleFavorite} />
+                            <LinkGrid items={items} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} />
                           </section>
                         );
                       })}
@@ -292,14 +325,14 @@ export default function Dashboard() {
                           <Inbox className="h-5 w-5 text-muted-foreground" />
                           <h3 className="text-lg font-semibold text-foreground">Sem categoria</h3>
                         </div>
-                        <LinkGrid items={grouped.uncategorized} toggleFavorite={toggleFavorite} />
+                        <LinkGrid items={grouped.uncategorized} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} />
                       </section>
                     )}
                   </>
                 )}
 
                 {view.kind !== 'all' && (
-                  <LinkGrid items={filtered} toggleFavorite={toggleFavorite} />
+                  <LinkGrid items={filtered} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} />
                 )}
 
                 {filtered.length === 0 && links.length > 0 && (
@@ -329,6 +362,77 @@ export default function Dashboard() {
           </div>
         </SidebarInset>
       </SidebarProvider>
+
+      {/* ── Edit dialog ── */}
+      <Dialog open={!!editingLink} onOpenChange={(o) => { if (!o) setEditingLink(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Editar link</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="edit-name">Nome</Label>
+              <Input
+                id="edit-name"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                placeholder="Nome do link"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-url">URL</Label>
+              <Input
+                id="edit-url"
+                type="url"
+                value={editUrl}
+                onChange={(e) => setEditUrl(e.target.value)}
+                placeholder="https://exemplo.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-desc">Descrição (opcional)</Label>
+              <Textarea
+                id="edit-desc"
+                value={editDesc}
+                onChange={(e) => setEditDesc(e.target.value)}
+                placeholder="Breve descrição..."
+                rows={2}
+                className="resize-none"
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setEditingLink(null)}>Cancelar</Button>
+            <Button onClick={handleSaveEdit} disabled={!editName.trim() || !editUrl.trim()}>
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Delete confirmation ── */}
+      <AlertDialog open={!!deletingLink} onOpenChange={(o) => { if (!o) setDeletingLink(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir link?</AlertDialogTitle>
+            <AlertDialogDescription>
+              "{deletingLink?.name}" será removido permanentemente. Essa ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive hover:bg-destructive/90"
+              onClick={async () => {
+                if (deletingLink) await removeLink(deletingLink.id);
+                setDeletingLink(null);
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <DragOverlay>
         {draggingLink ? (

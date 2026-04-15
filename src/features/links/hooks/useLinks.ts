@@ -88,6 +88,24 @@ export function useLinks() {
     onError: () => toast.error('Erro ao remover link'),
   });
 
+  // ── Update ──────────────────────────────────────────────────────────────
+
+  const updateMutation = useMutation({
+    mutationFn: async ({
+      id, name, url, description,
+    }: { id: string; name: string; url: string; description?: string | null }) => {
+      const validation = linkSchema.safeParse({ name, url });
+      if (!validation.success) throw new Error(validation.error.errors[0].message);
+      await linksService.update(id, {
+        name: name.toUpperCase(),
+        url,
+        description: description?.trim() || null,
+      });
+    },
+    onSuccess: () => toast.success('Link atualizado'),
+    onError: (err: Error) => toast.error(err.message || 'Erro ao atualizar link'),
+  });
+
   // ── Toggle favorite (optimistic) ────────────────────────────────────────
 
   const toggleFavMutation = useMutation({
@@ -143,6 +161,8 @@ export function useLinks() {
     addLink: (name: string, url: string, description?: string, categoryId?: string | null) =>
       addMutation.mutateAsync({ name, url, description, categoryId }),
     removeLink: (id: string) => removeMutation.mutateAsync(id),
+    updateLink: (id: string, name: string, url: string, description?: string | null) =>
+      updateMutation.mutateAsync({ id, name, url, description }),
     toggleFavorite: (id: string) => {
       const link = links.find((l) => l.id === id);
       if (link) toggleFavMutation.mutate({ id, newValue: !link.is_favorite });
