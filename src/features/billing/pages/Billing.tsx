@@ -37,16 +37,24 @@ const PLANS: {
 
 export default function Billing() {
   const navigate = useNavigate();
-  const { session } = useSupabaseAuth();
+  const { session, refreshProfile } = useSupabaseAuth();
   const { plan, subscription } = useSubscription();
   const [loadingPlan, setLoadingPlan] = useState<PlanTier | null>(null);
   const [loadingPortal, setLoadingPortal] = useState(false);
   const [params] = useSearchParams();
 
   useEffect(() => {
-    if (params.get('success')) toast.success('Pagamento confirmado! Seu plano será atualizado em instantes.');
-    if (params.get('canceled')) toast.info('Checkout cancelado.');
-  }, [params]);
+    if (params.get('canceled')) { toast.info('Checkout cancelado.'); return; }
+    if (!params.get('success')) return;
+
+    toast.success('Pagamento confirmado! Atualizando plano...');
+
+    // Webhook é assíncrono — faz polling para capturar a atualização
+    const delays = [2000, 5000, 10000, 20000];
+    const timers = delays.map((ms) => setTimeout(() => refreshProfile(), ms));
+    return () => timers.forEach(clearTimeout);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const upgrade = async (target: PlanTier) => {
     if (target === 'free' || !session) return;
