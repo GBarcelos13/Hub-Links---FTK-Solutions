@@ -10,7 +10,7 @@ import { Loader2, CheckCircle2, MessageCircle } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from 'sonner';
 
-const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY as string | undefined;
+const WEB3FORMS_KEY = (import.meta.env.VITE_WEB3FORMS_KEY as string | undefined) ?? '10a1a4f8-e89f-41a3-8041-66c6d410c0fa';
 
 interface Props {
   open: boolean;
@@ -40,11 +40,6 @@ export function FeedbackDialog({ open, onOpenChange }: Props) {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
-
-    if (!WEB3FORMS_KEY) {
-      toast.error('Chave Web3Forms não configurada. Adicione VITE_WEB3FORMS_KEY no .env');
-      return;
-    }
 
     setSending(true);
     try {
