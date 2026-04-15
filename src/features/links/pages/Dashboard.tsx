@@ -182,7 +182,7 @@ export default function Dashboard() {
         )
       : links;
 
-    if (view.kind === 'all') return list;
+    if (view.kind === 'all' || view.kind === 'all-grouped') return list;
     if (view.kind === 'favorites') return list.filter((l) => l.is_favorite);
     if (view.kind === 'uncategorized') {
       return list.filter((l) => !l.category_id || !visibleCategoryIds.has(l.category_id));
