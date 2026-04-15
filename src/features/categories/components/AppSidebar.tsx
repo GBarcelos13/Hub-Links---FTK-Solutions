@@ -19,7 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import {
   Layers, Star, Inbox, Plus, MoreHorizontal, Pencil, Trash2,
-  CreditCard, LogOut, Lock, Sparkles, MessageCircle,
+  CreditCard, LogOut, Lock, Sparkles, MessageCircle, PuzzleIcon,
 } from 'lucide-react';
 import { CategoryDialog } from '@/features/categories/components/CategoryDialog';
 import { UpgradePrompt } from '@/features/billing/components/PlanGate';
@@ -108,11 +108,12 @@ export function AppSidebar() {
 
   const canCreate = categories.length < limits.categories;
 
-  const [createOpen,   setCreateOpen]   = useState(false);
-  const [upgradeOpen,  setUpgradeOpen]  = useState(false);
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [editing,      setEditing]      = useState<Category | null>(null);
-  const [deleting,     setDeleting]     = useState<Category | null>(null);
+  const [createOpen,    setCreateOpen]    = useState(false);
+  const [upgradeOpen,   setUpgradeOpen]   = useState(false);
+  const [feedbackOpen,  setFeedbackOpen]  = useState(false);
+  const [extOpen,       setExtOpen]       = useState(false);
+  const [editing,       setEditing]       = useState<Category | null>(null);
+  const [deleting,      setDeleting]      = useState<Category | null>(null);
 
   const handleNew = () => {
     if (canCreate) setCreateOpen(true);
@@ -234,6 +235,15 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t">
+        {/* ── Instalar extensão ── */}
+        <SidebarMenuButton
+          onClick={() => setExtOpen(true)}
+          className="text-muted-foreground hover:text-foreground"
+        >
+          <PuzzleIcon className="h-4 w-4" />
+          <span>Instalar extensão</span>
+        </SidebarMenuButton>
+
         {/* ── Fale conosco ── */}
         <SidebarMenuButton
           onClick={() => setFeedbackOpen(true)}
@@ -323,6 +333,69 @@ export function AppSidebar() {
       </Dialog>
 
       <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} />
+
+      {/* ── Extensão de navegador ── */}
+      <Dialog open={extOpen} onOpenChange={setExtOpen}>
+        <DialogContent className="max-w-md">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-primary/10 p-2.5">
+                <PuzzleIcon className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-base">Extensão do Navegador</h2>
+                <p className="text-xs text-muted-foreground">Salve links com 1 clique</p>
+              </div>
+            </div>
+
+            <p className="text-sm text-muted-foreground">
+              Instale a extensão no Chrome ou Edge e salve qualquer página no seu hub sem sair do navegador.
+            </p>
+
+            <div className="rounded-xl border bg-muted/30 p-4 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Como instalar</p>
+              <ol className="space-y-2.5 text-sm">
+                <li className="flex gap-2.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">1</span>
+                  <span>Baixe os arquivos da extensão clicando no botão abaixo.</span>
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">2</span>
+                  <span>Extraia a pasta baixada em qualquer lugar do seu computador.</span>
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">3</span>
+                  <span>
+                    Abra <strong>chrome://extensions</strong> (Chrome) ou <strong>edge://extensions</strong> (Edge).
+                  </span>
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">4</span>
+                  <span>Ative o <strong>Modo desenvolvedor</strong> no canto superior direito.</span>
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">5</span>
+                  <span>Clique em <strong>Carregar sem compactação</strong> e selecione a pasta extraída.</span>
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">6</span>
+                  <span>Pronto! O ícone da extensão aparecerá na barra do navegador.</span>
+                </li>
+              </ol>
+            </div>
+
+            <a
+              href="https://drive.google.com/drive/folders/1TyTUIj5uD4S0SJpV0yYJjgwV0qb_YgoH?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              <PuzzleIcon className="h-4 w-4" />
+              Baixar extensão
+            </a>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Sidebar>
   );
 }
