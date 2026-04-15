@@ -70,7 +70,10 @@ export function useLinks() {
         category_id: categoryId ?? null,
       });
     },
-    onSuccess: () => toast.success('Link adicionado com sucesso!'),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey });
+      toast.success('Link adicionado com sucesso!');
+    },
     onError: (err: Error) => {
       if (err.message?.includes('LINK_LIMIT_REACHED')) {
         toast.error('Limite do seu plano atingido. Faça upgrade para adicionar mais.');
@@ -84,7 +87,10 @@ export function useLinks() {
 
   const removeMutation = useMutation({
     mutationFn: (id: string) => linksService.remove(id),
-    onSuccess: () => toast.success('Link removido'),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey });
+      toast.success('Link removido');
+    },
     onError: () => toast.error('Erro ao remover link'),
   });
 
@@ -102,7 +108,10 @@ export function useLinks() {
         description: description?.trim() || null,
       });
     },
-    onSuccess: () => toast.success('Link atualizado'),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey });
+      toast.success('Link atualizado');
+    },
     onError: (err: Error) => toast.error(err.message || 'Erro ao atualizar link'),
   });
 
