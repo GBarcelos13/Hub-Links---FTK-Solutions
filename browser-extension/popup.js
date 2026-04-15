@@ -123,16 +123,32 @@ async function loadSaveScreen(session) {
   const origin = new URL(tab.url).origin;
   $('page-favicon').src = `${origin}/favicon.ico`;
   $('page-favicon').onerror = () => { $('page-favicon').src = 'icons/icon16.png'; };
-  $('page-title').textContent = tab.title || tab.url;
-  $('page-url').textContent   = tab.url;
+  $('page-url-preview').textContent = tab.url;
+
+  // Preenche campos editáveis
+  $('edit-name').value = tab.title || tab.url;
+  $('edit-url').value  = tab.url;
+
+  // Atualiza favicon ao mudar URL
+  $('edit-url').addEventListener('input', () => {
+    try {
+      const u = new URL($('edit-url').value.trim());
+      $('page-favicon').src = `${u.origin}/favicon.ico`;
+      $('page-url-preview').textContent = $('edit-url').value.trim();
+    } catch { /* URL ainda inválida, ignora */ }
+  });
+
+  setTimeout(() => { $('edit-name').focus(); $('edit-name').select(); }, 80);
 
   // Botão salvar
   $('btn-save').onclick = async () => {
+    const name = $('edit-name').value.trim() || tab.title || tab.url;
+    const url  = $('edit-url').value.trim()  || tab.url;
     $('save-error').classList.add('hidden');
     setLoading('btn-save', true);
     try {
-      await saveLink(session.access_token, session.user.id, tab.title || tab.url, tab.url);
-      $('saved-title').textContent = (tab.title || tab.url).toUpperCase();
+      await saveLink(session.access_token, session.user.id, name, url);
+      $('saved-title').textContent = name.toUpperCase();
       show('screen-success');
       // Fecha o popup automaticamente após 1.5s
       setTimeout(() => window.close(), 1500);

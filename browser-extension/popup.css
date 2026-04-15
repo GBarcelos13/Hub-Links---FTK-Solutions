@@ -80,15 +80,9 @@ input:focus { border-color: var(--primary); }
 
 .page-info { flex: 1; min-width: 0; }
 
-.page-title {
-  font-size: 12px; font-weight: 600; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
 .page-url {
   font-size: 11px; color: var(--muted);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  margin-top: 1px;
 }
 
 /* ── Save button ── */

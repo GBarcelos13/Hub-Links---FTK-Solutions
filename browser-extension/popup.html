@@ -74,9 +74,18 @@
     <div class="page-preview">
       <img id="page-favicon" class="favicon" src="" alt="" />
       <div class="page-info">
-        <p id="page-title" class="page-title">—</p>
-        <p id="page-url"   class="page-url">—</p>
+        <p id="page-url-preview" class="page-url">—</p>
       </div>
+    </div>
+
+    <!-- Campos editáveis -->
+    <div class="field">
+      <label for="edit-name">Nome</label>
+      <input id="edit-name" type="text" placeholder="Nome do link" maxlength="120" />
+    </div>
+    <div class="field" style="margin-bottom:10px">
+      <label for="edit-url">URL</label>
+      <input id="edit-url" type="url" placeholder="https://..." />
     </div>
 
     <div id="save-error" class="error-msg hidden"></div>

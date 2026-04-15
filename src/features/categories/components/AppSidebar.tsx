@@ -36,12 +36,14 @@ import { cn } from '@/lib/utils';
 
 export type SidebarView =
   | { kind: 'all' }
+  | { kind: 'all-grouped' }
   | { kind: 'favorites' }
   | { kind: 'uncategorized' }
   | { kind: 'category'; id: string };
 
 export function parseView(param: string | null): SidebarView {
   if (!param || param === 'all') return { kind: 'all' };
+  if (param === 'all-grouped') return { kind: 'all-grouped' };
   if (param === 'favorites') return { kind: 'favorites' };
   if (param === 'uncategorized') return { kind: 'uncategorized' };
   return { kind: 'category', id: param };
@@ -93,6 +95,8 @@ export function AppSidebar() {
     else nextParams.set('view', next.kind);
     setSearchParams(nextParams, { replace: true });
   };
+
+  const allGroupedCount = links.length;
 
   const visibleCategories = useMemo(() => {
     const limit = limits.categories;
@@ -175,6 +179,13 @@ export function AppSidebar() {
           </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive={isActive({ kind: 'all-grouped' })} onClick={() => setView({ kind: 'all-grouped' })}>
+                  <Layers className="h-4 w-4" />
+                  <span>Todos</span>
+                  <span className="ml-auto text-xs text-muted-foreground">{allGroupedCount}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               {visibleCategories.map((cat) => {
                 const active = isActive({ kind: 'category', id: cat.id });
                 return (

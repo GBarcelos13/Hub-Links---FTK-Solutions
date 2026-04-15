@@ -35,7 +35,9 @@ export function useLinks() {
         { event: '*', schema: 'public', table: 'links', filter: `user_id=eq.${user.id}` },
         () => qc.invalidateQueries({ queryKey }),
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        if (err) console.error('[links-realtime] subscription error:', err);
+      });
     return () => { supabase.removeChannel(channel); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);

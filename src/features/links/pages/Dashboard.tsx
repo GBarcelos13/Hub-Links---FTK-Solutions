@@ -198,15 +198,17 @@ export default function Dashboard() {
       case 'favorites':     return 'Favoritos';
       case 'uncategorized': return 'Sem categoria';
       case 'category':      return activeCategory?.name ?? 'Categoria';
+      case 'all-grouped':   return 'Todos os links';
       default:              return 'Todos os links';
     }
   })();
 
-  const favoriteLinks = view.kind === 'all' ? filtered.filter((l) => l.is_favorite) : [];
-  const regularLinks  = view.kind === 'all' ? filtered.filter((l) => !l.is_favorite) : filtered;
+  const isGroupedView = view.kind === 'all-grouped';
+  const favoriteLinks = isGroupedView ? filtered.filter((l) => l.is_favorite) : [];
+  const regularLinks  = isGroupedView ? filtered.filter((l) => !l.is_favorite) : filtered;
 
   const grouped = useMemo(() => {
-    if (view.kind !== 'all') return null;
+    if (!isGroupedView) return null;
     const byCategory = new Map<string, Link[]>();
     const uncategorized: Link[] = [];
     for (const link of regularLinks) {
@@ -219,7 +221,7 @@ export default function Dashboard() {
       }
     }
     return { byCategory, uncategorized };
-  }, [regularLinks, view.kind, visibleCategoryIds]);
+  }, [regularLinks, isGroupedView, visibleCategoryIds]);
 
   if (loading || loadingCategories) {
     return (
@@ -311,7 +313,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {view.kind === 'all' && grouped && (
+                {isGroupedView && grouped && (
                   <>
                     {favoriteLinks.length > 0 && (
                       <section className="mb-12">
@@ -348,7 +350,7 @@ export default function Dashboard() {
                   </>
                 )}
 
-                {view.kind !== 'all' && (
+                {!isGroupedView && (
                   <LinkGrid items={filtered} toggleFavorite={toggleFavorite} onEdit={openEdit} onRemove={setDeletingLink} size={viewSize} />
                 )}
 
