@@ -2,109 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    /* VoiceManager Hub Design System - Professional & Clean */
-    --background: 0 0% 98%;
-    --foreground: 222 47% 11%;
+    /* ── HUB Links Design System v2 ──────────────────────────────── */
+    /* Light mode: warm paper + deep navy text + amber accent         */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --background:        45 25% 97%;       /* warm off-white paper    */
+    --foreground:        220 30% 10%;      /* deep navy               */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --card:              0 0% 100%;
+    --card-foreground:   220 30% 10%;
 
-    /* Professional Blue - Main brand color */
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 221 83% 45%;
+    --popover:           0 0% 100%;
+    --popover-foreground:220 30% 10%;
 
-    /* Soft secondary for subtle elements */
-    --secondary: 214 32% 91%;
-    --secondary-foreground: 222 47% 11%;
+    /* Amber — brand accent */
+    --primary:           38 96% 48%;
+    --primary-foreground:0 0% 100%;
 
-    /* Muted backgrounds and text */
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --secondary:         220 20% 94%;
+    --secondary-foreground:220 30% 10%;
 
-    /* Accent for CTAs and important actions */
-    --accent: 217 91% 60%;
+    --muted:             220 20% 93%;
+    --muted-foreground:  220 15% 46%;
+
+    --accent:            38 96% 48%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive:       0 84% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 88%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    --border:            220 20% 88%;
+    --input:             220 20% 92%;
+    --ring:              38 96% 48%;
 
-    --radius: 0.75rem;
+    --radius:            0.75rem;
 
-    /* Custom tokens for VoiceManager */
-    --link-button: 0 0% 100%;
-    --link-button-border: 214 32% 85%;
-    --link-button-hover: 221 83% 97%;
-    --link-button-text: 222 47% 11%;
+    /* Link button tokens */
+    --link-button:        0 0% 100%;
+    --link-button-border: 220 20% 87%;
+    --link-button-hover:  38 60% 97%;
+    --link-button-text:   220 30% 10%;
 
-    /* Header and Footer - harmonized with logo */
-    --header-bg: 221 83% 53%;
-    --header-fg: 0 0% 100%;
-    --header-border: 221 83% 45%;
-    
-    --footer-bg: 222 47% 11%;
-    --footer-fg: 210 40% 98%;
-    --footer-border: 222 47% 20%;
+    /* Header */
+    --header-bg:    220 30% 10%;
+    --header-fg:    0 0% 98%;
+    --header-border:220 25% 16%;
 
-    /* Smooth transitions */
-    --transition: all 0.2s ease;
+    /* Footer */
+    --footer-bg:    220 30% 8%;
+    --footer-fg:    210 15% 80%;
+    --footer-border:220 25% 14%;
+
+    /* Sidebar */
+    --sidebar:               220 20% 96%;
+    --sidebar-foreground:    220 30% 10%;
+    --sidebar-primary:       38 96% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent:        220 20% 91%;
+    --sidebar-accent-foreground: 220 30% 10%;
+    --sidebar-border:        220 20% 88%;
+    --sidebar-ring:          38 96% 48%;
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* Dark mode: deep obsidian + amber accent */
+    --background:        222 22% 8%;       /* near-black navy          */
+    --foreground:        210 15% 93%;      /* warm near-white          */
 
-    --card: 222 47% 13%;
-    --card-foreground: 210 40% 98%;
+    --card:              222 20% 11%;
+    --card-foreground:   210 15% 93%;
 
-    --popover: 222 47% 13%;
-    --popover-foreground: 210 40% 98%;
+    --popover:           222 20% 11%;
+    --popover-foreground:210 15% 93%;
 
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 221 83% 60%;
+    --primary:           38 96% 56%;       /* amber — pops on dark     */
+    --primary-foreground:222 22% 8%;
 
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary:         222 18% 15%;
+    --secondary-foreground:210 15% 93%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted:             222 18% 14%;
+    --muted-foreground:  220 15% 52%;
 
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent:            38 96% 56%;
+    --accent-foreground: 222 22% 8%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive:       0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 221 83% 53%;
+    --border:            222 18% 17%;
+    --input:             222 18% 14%;
+    --ring:              38 96% 56%;
 
-    --link-button: 222 47% 13%;
-    --link-button-border: 217 33% 25%;
-    --link-button-hover: 217 33% 20%;
-    --link-button-text: 210 40% 98%;
-    
-    --header-bg: 221 83% 45%;
-    --header-fg: 0 0% 100%;
-    --header-border: 221 83% 35%;
-    
-    --footer-bg: 222 47% 8%;
-    --footer-fg: 210 40% 98%;
-    --footer-border: 222 47% 15%;
+    /* Link button tokens */
+    --link-button:        222 20% 11%;
+    --link-button-border: 222 18% 17%;
+    --link-button-hover:  222 18% 15%;
+    --link-button-text:   210 15% 93%;
+
+    /* Header */
+    --header-bg:    222 22% 6%;
+    --header-fg:    210 15% 93%;
+    --header-border:222 18% 12%;
+
+    /* Footer */
+    --footer-bg:    222 25% 5%;
+    --footer-fg:    220 15% 60%;
+    --footer-border:222 18% 10%;
+
+    /* Sidebar */
+    --sidebar:               222 22% 8%;
+    --sidebar-foreground:    210 15% 93%;
+    --sidebar-primary:       38 96% 56%;
+    --sidebar-primary-foreground: 222 22% 8%;
+    --sidebar-accent:        222 18% 14%;
+    --sidebar-accent-foreground: 210 15% 93%;
+    --sidebar-border:        222 18% 13%;
+    --sidebar-ring:          38 96% 56%;
   }
 }
 
@@ -113,7 +128,130 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "ss02";
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', 'DM Sans', system-ui, sans-serif;
+    letter-spacing: -0.03em;
+  }
+}
+
+/* ── Animations ─────────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes shine {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+  70%  { box-shadow: 0 0 0 12px hsl(var(--primary) / 0); }
+  100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out both;
+}
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out both;
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+.animate-delay-100 { animation-delay: 0.1s; }
+.animate-delay-200 { animation-delay: 0.2s; }
+.animate-delay-300 { animation-delay: 0.3s; }
+.animate-delay-400 { animation-delay: 0.4s; }
+.animate-delay-500 { animation-delay: 0.5s; }
+
+/* ── Input refinements ───────────────────────────────────────────── */
+/* Garante borda visível em dark mode */
+.dark input,
+.dark textarea,
+.dark select {
+  border-color: hsl(var(--border));
+  background-color: hsl(var(--input));
+}
+.dark input:focus,
+.dark textarea:focus {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
+}
+
+/* ── Utility classes ─────────────────────────────────────────────── */
+.font-display {
+  font-family: 'Syne', system-ui, sans-serif;
+}
+.font-mono-dm {
+  font-family: 'DM Mono', 'Courier New', monospace;
+}
+
+/* Amber gradient text */
+.text-amber-gradient {
+  background: linear-gradient(135deg, hsl(38 96% 62%), hsl(30 96% 50%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtle noise texture overlay for depth */
+.bg-noise {
+  position: relative;
+}
+.bg-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+/* Glow effect for CTA */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.15) 50%,
+    transparent 100%
+  );
+  background-size: 200% auto;
+  animation: shine 3s linear infinite;
+  pointer-events: none;
+}
+
+/* Amber dot indicator */
+.hub-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  animation: pulse-ring 2.5s ease-out infinite;
 }

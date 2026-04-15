@@ -92,6 +92,28 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      fontFamily: {
+        display: ['Syne', 'DM Sans', 'system-ui', 'sans-serif'],
+        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+        mono: ['DM Mono', 'Courier New', 'monospace'],
+      },
+      fontWeight: {
+        '700': '700',
+        '800': '800',
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
+      sidebar: {
+        DEFAULT: 'hsl(var(--sidebar))',
+        foreground: 'hsl(var(--sidebar-foreground))',
+        primary: 'hsl(var(--sidebar-primary))',
+        'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+        accent: 'hsl(var(--sidebar-accent))',
+        'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+        border: 'hsl(var(--sidebar-border))',
+        ring: 'hsl(var(--sidebar-ring))',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

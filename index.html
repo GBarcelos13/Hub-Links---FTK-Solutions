@@ -2,19 +2,32 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VoiceManager Hub - Central de Links de Trabalho</title>
-    <meta name="description" content="Hub central de links de trabalho VoiceManager - Acesse rapidamente suas ferramentas essenciais" />
-    <meta name="author" content="VoiceManager" />
+    <title>HUB Links — Sua central de links de trabalho</title>
+    <meta name="description" content="Organize ferramentas, IAs, docs e qualquer link do seu trabalho num hub privado, rápido e bonito." />
 
-    <meta property="og:title" content="VoiceManager Hub" />
-    <meta property="og:description" content="Central de links de trabalho VoiceManager" />
+    <meta property="og:title" content="HUB Links" />
+    <meta property="og:description" content="Sua central de links de trabalho — privado, rápido e organizado." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@VoiceManager" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Syne: bold geometric display. DM Sans: clean body. DM Mono: URLs/code -->
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- Prevent flash of unstyled content for dark mode -->
+    <script>
+      (function () {
+        var stored = localStorage.getItem('hub-theme');
+        if (stored === 'light') {
+          document.documentElement.classList.remove('dark');
+        } else {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
 
   <body>

@@ -6,9 +6,18 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+export type PlanTier = 'free' | 'pro' | 'elite'
+
+export type SubscriptionStatus =
+  | 'trialing'
+  | 'active'
+  | 'past_due'
+  | 'canceled'
+  | 'incomplete'
+  | 'incomplete_expired'
+  | 'unpaid'
+
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.5"
   }
@@ -17,78 +26,150 @@ export type Database = {
       links: {
         Row: {
           created_at: string | null
-          created_by: string
+          description: string | null
           display_order: number
           id: string
+          is_favorite: boolean
           name: string
           updated_at: string | null
           url: string
+          user_id: string
+          category_id: string | null
         }
         Insert: {
           created_at?: string | null
-          created_by: string
+          description?: string | null
           display_order?: number
           id?: string
+          is_favorite?: boolean
           name: string
           updated_at?: string | null
           url: string
+          user_id: string
+          category_id?: string | null
         }
         Update: {
           created_at?: string | null
-          created_by?: string
+          description?: string | null
           display_order?: number
           id?: string
+          is_favorite?: boolean
           name?: string
           updated_at?: string | null
           url?: string
+          user_id?: string
+          category_id?: string | null
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          color: string
+          emoji: string
+          display_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          color?: string
+          emoji?: string
+          display_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          color?: string
+          emoji?: string
+          display_order?: number
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
       profiles: {
         Row: {
-          created_at: string | null
-          first_login: boolean | null
           id: string
-          updated_at: string | null
-          user_id: string
-          username: string | null
+          email: string
+          full_name: string | null
+          avatar_url: string | null
+          slug: string | null
+          plan: PlanTier
+          stripe_customer_id: string | null
+          onboarded: boolean
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
-          first_login?: boolean | null
-          id?: string
-          updated_at?: string | null
-          user_id: string
-          username?: string | null
+          id: string
+          email: string
+          full_name?: string | null
+          avatar_url?: string | null
+          slug?: string | null
+          plan?: PlanTier
+          stripe_customer_id?: string | null
+          onboarded?: boolean
+          created_at?: string
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
-          first_login?: boolean | null
           id?: string
-          updated_at?: string | null
-          user_id?: string
-          username?: string | null
+          email?: string
+          full_name?: string | null
+          avatar_url?: string | null
+          slug?: string | null
+          plan?: PlanTier
+          stripe_customer_id?: string | null
+          onboarded?: boolean
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
-      user_roles: {
+      subscriptions: {
         Row: {
-          created_at: string | null
           id: string
-          role: Database["public"]["Enums"]["app_role"]
           user_id: string
+          stripe_subscription_id: string | null
+          stripe_price_id: string | null
+          plan: PlanTier
+          status: SubscriptionStatus
+          current_period_end: string | null
+          cancel_at_period_end: boolean
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
           id?: string
-          role: Database["public"]["Enums"]["app_role"]
           user_id: string
+          stripe_subscription_id?: string | null
+          stripe_price_id?: string | null
+          plan?: PlanTier
+          status?: SubscriptionStatus
+          current_period_end?: string | null
+          cancel_at_period_end?: boolean
+          created_at?: string
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+          stripe_subscription_id?: string | null
+          stripe_price_id?: string | null
+          plan?: PlanTier
+          status?: SubscriptionStatus
+          current_period_end?: string | null
+          cancel_at_period_end?: boolean
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -97,16 +178,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
+      plan_link_limit: {
+        Args: { p: PlanTier }
+        Returns: number
+      }
+      plan_category_limit: {
+        Args: { p: PlanTier }
+        Returns: number
+      }
+      user_link_count: {
+        Args: { uid: string }
+        Returns: number
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      plan_tier: PlanTier
+      subscription_status: SubscriptionStatus
     }
     CompositeTypes: {
       [_ in never]: never
@@ -234,7 +321,11 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      plan_tier: ['free', 'pro', 'elite'] as const,
+      subscription_status: [
+        'trialing', 'active', 'past_due', 'canceled',
+        'incomplete', 'incomplete_expired', 'unpaid'
+      ] as const,
     },
   },
 } as const
