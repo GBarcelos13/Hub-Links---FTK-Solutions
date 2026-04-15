@@ -1,20 +1,14 @@
 const SUPABASE_URL = 'https://qxlkjlqdpynvuipmgdei.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4bGtqbHFkcHludnVpcG1nZGVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5MzExMjksImV4cCI6MjA5MTUwNzEyOX0.6G5_I3sa2fKGhoEXTSKBFdHCYVw3kCjufz3RpzpMaPM';
 
-// ── Storage helpers ────────────────────────────────────────────────────────
-function getSession() {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(['hub_session'], (r) => resolve(r.hub_session || null));
-  });
-}
-function saveSession(session) {
-  return new Promise((resolve) => chrome.storage.local.set({ hub_session: session }, resolve));
-}
-function clearSession() {
-  return new Promise((resolve) => chrome.storage.local.remove(['hub_session'], resolve));
-}
+// ── Storage ────────────────────────────────────────────────────────────────
+const store = {
+  get: () => new Promise((r) => chrome.storage.local.get(['hub_session'], (d) => r(d.hub_session || null))),
+  set: (v) => new Promise((r) => chrome.storage.local.set({ hub_session: v }, r)),
+  clear: () => new Promise((r) => chrome.storage.local.remove(['hub_session'], r)),
+};
 
-// ── Supabase API ───────────────────────────────────────────────────────────
+// ── API ────────────────────────────────────────────────────────────────────
 async function signIn(email, password) {
   const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method: 'POST',
@@ -26,17 +20,15 @@ async function signIn(email, password) {
   return data;
 }
 
-async function getMaxOrder(token, userId) {
-  const res = await fetch(
+async function saveLink(token, userId, name, url) {
+  // Pega o maior display_order existente
+  const ordRes = await fetch(
     `${SUPABASE_URL}/rest/v1/links?user_id=eq.${userId}&select=display_order&order=display_order.desc&limit=1`,
     { headers: { Authorization: `Bearer ${token}`, apikey: SUPABASE_KEY } },
   );
-  const rows = await res.json();
-  return Array.isArray(rows) && rows.length > 0 ? rows[0].display_order : -1;
-}
+  const rows = await ordRes.json();
+  const maxOrder = Array.isArray(rows) && rows.length ? rows[0].display_order : -1;
 
-async function addLink(token, userId, name, url, description) {
-  const maxOrder = await getMaxOrder(token, userId);
   const res = await fetch(`${SUPABASE_URL}/rest/v1/links`, {
     method: 'POST',
     headers: {
@@ -48,147 +40,112 @@ async function addLink(token, userId, name, url, description) {
     body: JSON.stringify({
       name: name.trim().toUpperCase(),
       url: url.trim(),
-      description: description.trim() || null,
+      description: null,
       display_order: maxOrder + 1,
       user_id: userId,
     }),
   });
 
   if (!res.ok) {
-    const text = await res.text();
     let msg = 'Erro ao salvar link';
     try {
-      const body = JSON.parse(text);
-      if (body.message?.includes('LINK_LIMIT_REACHED')) {
-        msg = 'Limite de links atingido. Faça upgrade do plano.';
-      } else {
-        msg = body.message || body.error || msg;
-      }
+      const body = await res.json();
+      if (body.message?.includes('LINK_LIMIT_REACHED')) msg = 'Limite de links atingido. Faça upgrade do plano.';
+      else msg = body.message || body.error || msg;
     } catch { /* ignore */ }
     throw new Error(msg);
   }
 }
 
-// ── Screen helpers ─────────────────────────────────────────────────────────
-function showScreen(id) {
+// ── UI helpers ─────────────────────────────────────────────────────────────
+const $ = (id) => document.getElementById(id);
+
+function show(screenId) {
   document.querySelectorAll('.screen').forEach((s) => s.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+  $(screenId).classList.remove('hidden');
 }
 
-function setLoading(btn, loading) {
-  btn.disabled = loading;
-  btn.querySelector('.btn-text').classList.toggle('hidden', loading);
-  btn.querySelector('.btn-spinner').classList.toggle('hidden', !loading);
+function setLoading(btnId, on) {
+  const btn = $(btnId);
+  btn.disabled = on;
+  btn.querySelector('.btn-text').classList.toggle('hidden', on);
+  btn.querySelector('.btn-loader').classList.toggle('hidden', !on);
 }
 
-function showError(elId, msg) {
-  const el = document.getElementById(elId);
-  el.textContent = msg;
-  el.classList.remove('hidden');
-}
-
-function hideError(elId) {
-  document.getElementById(elId).classList.add('hidden');
-}
-
-// ── Current tab ────────────────────────────────────────────────────────────
-async function getCurrentTab() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  return tab;
-}
-
-// ── Main ───────────────────────────────────────────────────────────────────
+// ── Init ───────────────────────────────────────────────────────────────────
 (async () => {
-  const session = await getSession();
+  const session = await store.get();
+  if (!session) { show('screen-login'); return; }
 
-  // ── Login screen ────────────────────────────────────────────────────────
-  document.getElementById('form-login').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    hideError('login-error');
-    const btn = document.getElementById('btn-login');
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+  // Carrega a tela principal
+  await loadSaveScreen(session);
+})();
 
-    setLoading(btn, true);
-    try {
-      const data = await signIn(email, password);
-      await saveSession({ access_token: data.access_token, user: data.user });
-      await loadSaveScreen();
-    } catch (err) {
-      showError('login-error', err.message);
-    } finally {
-      setLoading(btn, false);
-    }
-  });
+// ── Login ──────────────────────────────────────────────────────────────────
+$('form-login').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  $('login-error').classList.add('hidden');
+  setLoading('btn-login', true);
 
-  // ── Logout ───────────────────────────────────────────────────────────────
-  document.getElementById('btn-logout').addEventListener('click', async () => {
-    await clearSession();
-    showScreen('screen-login');
-  });
+  try {
+    const data = await signIn($('email').value, $('password').value);
+    const session = { access_token: data.access_token, user: data.user };
+    await store.set(session);
+    await loadSaveScreen(session);
+  } catch (err) {
+    $('login-error').textContent = err.message;
+    $('login-error').classList.remove('hidden');
+  } finally {
+    setLoading('btn-login', false);
+  }
+});
 
-  // ── Save screen ──────────────────────────────────────────────────────────
-  async function loadSaveScreen() {
-    showScreen('screen-save');
-    const tab = await getCurrentTab();
+// ── Logout ─────────────────────────────────────────────────────────────────
+$('btn-logout').addEventListener('click', async () => {
+  await store.clear();
+  show('screen-login');
+});
 
-    const nameInput = document.getElementById('link-name');
-    const urlInput  = document.getElementById('link-url');
+// ── Tela de salvar ─────────────────────────────────────────────────────────
+async function loadSaveScreen(session) {
+  show('screen-save');
+  $('save-error').classList.add('hidden');
 
-    // Pre-fill with tab info (skip chrome:// pages)
-    if (tab?.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://')) {
-      urlInput.value  = tab.url;
-      nameInput.value = tab.title || '';
-    }
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-    nameInput.focus();
-    nameInput.select();
+  // Bloqueia páginas internas do browser
+  if (!tab?.url || tab.url.startsWith('chrome://') || tab.url.startsWith('edge://') || tab.url.startsWith('about:')) {
+    show('screen-unsupported');
+    return;
   }
 
-  document.getElementById('form-save').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    hideError('save-error');
-    const btn     = document.getElementById('btn-save');
-    const session = await getSession();
+  // Preenche preview
+  const origin = new URL(tab.url).origin;
+  $('page-favicon').src = `${origin}/favicon.ico`;
+  $('page-favicon').onerror = () => { $('page-favicon').src = 'icons/icon16.png'; };
+  $('page-title').textContent = tab.title || tab.url;
+  $('page-url').textContent   = tab.url;
 
-    if (!session) { showScreen('screen-login'); return; }
-
-    const name = document.getElementById('link-name').value;
-    const url  = document.getElementById('link-url').value;
-    const desc = document.getElementById('link-desc').value;
-
-    setLoading(btn, true);
+  // Botão salvar
+  $('btn-save').onclick = async () => {
+    $('save-error').classList.add('hidden');
+    setLoading('btn-save', true);
     try {
-      await addLink(session.access_token, session.user.id, name, url, desc);
-
-      // Success screen
-      document.getElementById('success-name').textContent = name.toUpperCase();
-      showScreen('screen-success');
+      await saveLink(session.access_token, session.user.id, tab.title || tab.url, tab.url);
+      $('saved-title').textContent = (tab.title || tab.url).toUpperCase();
+      show('screen-success');
+      // Fecha o popup automaticamente após 1.5s
+      setTimeout(() => window.close(), 1500);
     } catch (err) {
-      // Session expired — go back to login
-      if (err.message.includes('JWT') || err.message.includes('Unauthorized')) {
-        await clearSession();
-        showScreen('screen-login');
+      if (err.message.includes('JWT') || err.message.includes('nauthorized')) {
+        await store.clear();
+        show('screen-login');
         return;
       }
-      showError('save-error', err.message);
+      $('save-error').textContent = err.message;
+      $('save-error').classList.remove('hidden');
     } finally {
-      setLoading(btn, false);
+      setLoading('btn-save', false);
     }
-  });
-
-  // ── "Salvar outro" ───────────────────────────────────────────────────────
-  document.getElementById('btn-another').addEventListener('click', async () => {
-    document.getElementById('link-name').value = '';
-    document.getElementById('link-url').value  = '';
-    document.getElementById('link-desc').value = '';
-    await loadSaveScreen();
-  });
-
-  // ── Initial render ───────────────────────────────────────────────────────
-  if (session) {
-    await loadSaveScreen();
-  } else {
-    showScreen('screen-login');
-  }
-})();
+  };
+}

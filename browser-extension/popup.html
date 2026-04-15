@@ -2,21 +2,20 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HUB Links</title>
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
 
-  <!-- ── TELA DE LOGIN ─────────────────────────────── -->
-  <div id="screen-login" class="screen">
+  <!-- ── LOGIN ─────────────────────────────────────── -->
+  <div id="screen-login" class="screen hidden">
     <div class="brand">
-      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
         <rect width="32" height="32" rx="7" fill="#0F172A"/>
-        <line x1="16" y1="16" x2="7"  y2="7"  stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
-        <line x1="16" y1="16" x2="25" y2="7"  stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
-        <line x1="16" y1="16" x2="7"  y2="25" stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
-        <line x1="16" y1="16" x2="25" y2="25" stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
+        <line x1="16" y1="16" x2="7"  y2="7"  stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+        <line x1="16" y1="16" x2="25" y2="7"  stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+        <line x1="16" y1="16" x2="7"  y2="25" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+        <line x1="16" y1="16" x2="25" y2="25" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
         <circle cx="16" cy="16" r="4"  fill="#F59E0B"/>
         <circle cx="7"  cy="7"  r="2.5" fill="#F59E0B" opacity=".85"/>
         <circle cx="25" cy="7"  r="2.5" fill="#F59E0B" opacity=".85"/>
@@ -26,35 +25,34 @@
       <span>HUB Links</span>
     </div>
 
-    <p class="subtitle">Entre para salvar links</p>
-
     <form id="form-login">
       <div class="field">
         <label for="email">E-mail</label>
-        <input id="email" type="email" placeholder="seu@email.com" autocomplete="email" required />
+        <input id="email" type="email" placeholder="seu@email.com" required />
       </div>
       <div class="field">
         <label for="password">Senha</label>
-        <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+        <input id="password" type="password" placeholder="••••••••" required />
       </div>
       <div id="login-error" class="error-msg hidden"></div>
       <button type="submit" id="btn-login" class="btn-primary">
         <span class="btn-text">Entrar</span>
-        <span class="btn-spinner hidden">⏳</span>
+        <span class="btn-loader hidden"></span>
       </button>
     </form>
   </div>
 
-  <!-- ── TELA DE SALVAR LINK ───────────────────────── -->
+  <!-- ── SALVAR (tela principal) ───────────────────── -->
   <div id="screen-save" class="screen hidden">
-    <div class="save-header">
-      <div class="brand">
-        <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+    <!-- Cabeçalho mínimo -->
+    <div class="top-bar">
+      <div class="brand-sm">
+        <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
           <rect width="32" height="32" rx="7" fill="#0F172A"/>
-          <line x1="16" y1="16" x2="7"  y2="7"  stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
-          <line x1="16" y1="16" x2="25" y2="7"  stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
-          <line x1="16" y1="16" x2="7"  y2="25" stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
-          <line x1="16" y1="16" x2="25" y2="25" stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
+          <line x1="16" y1="16" x2="7"  y2="7"  stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+          <line x1="16" y1="16" x2="25" y2="7"  stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+          <line x1="16" y1="16" x2="7"  y2="25" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+          <line x1="16" y1="16" x2="25" y2="25" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
           <circle cx="16" cy="16" r="4"  fill="#F59E0B"/>
           <circle cx="7"  cy="7"  r="2.5" fill="#F59E0B" opacity=".85"/>
           <circle cx="25" cy="7"  r="2.5" fill="#F59E0B" opacity=".85"/>
@@ -63,8 +61,8 @@
         </svg>
         <span>HUB Links</span>
       </div>
-      <button id="btn-logout" class="btn-ghost" title="Sair">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <button id="btn-logout" class="btn-icon" title="Sair">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
           <polyline points="16 17 21 12 16 7"/>
           <line x1="21" y1="12" x2="9" y2="12"/>
@@ -72,34 +70,49 @@
       </button>
     </div>
 
-    <form id="form-save">
-      <div class="field">
-        <label for="link-name">Nome</label>
-        <input id="link-name" type="text" maxlength="100" placeholder="Nome do link" required />
+    <!-- Preview da página atual -->
+    <div class="page-preview">
+      <img id="page-favicon" class="favicon" src="" alt="" />
+      <div class="page-info">
+        <p id="page-title" class="page-title">—</p>
+        <p id="page-url"   class="page-url">—</p>
       </div>
-      <div class="field">
-        <label for="link-url">URL</label>
-        <input id="link-url" type="url" placeholder="https://..." required />
-      </div>
-      <div class="field">
-        <label for="link-desc">Descrição <span class="optional">(opcional)</span></label>
-        <input id="link-desc" type="text" maxlength="200" placeholder="Breve descrição..." />
-      </div>
-      <div id="save-error" class="error-msg hidden"></div>
-      <button type="submit" id="btn-save" class="btn-primary">
-        <span class="btn-text">Salvar no HUB</span>
-        <span class="btn-spinner hidden">⏳</span>
-      </button>
-    </form>
+    </div>
+
+    <div id="save-error" class="error-msg hidden"></div>
+
+    <button id="btn-save" class="btn-save">
+      <span class="btn-text">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Salvar no HUB
+      </span>
+      <span class="btn-loader hidden"></span>
+    </button>
   </div>
 
-  <!-- ── TELA DE SUCESSO ───────────────────────────── -->
+  <!-- ── SUCESSO ────────────────────────────────────── -->
   <div id="screen-success" class="screen hidden">
-    <div class="success-content">
-      <div class="success-icon">✓</div>
-      <p class="success-title">Link salvo!</p>
-      <p class="success-sub" id="success-name"></p>
-      <button id="btn-another" class="btn-outline">Salvar outro</button>
+    <div class="result-box">
+      <div class="check-circle">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <p class="result-title">Link salvo!</p>
+      <p id="saved-title" class="result-sub"></p>
+    </div>
+  </div>
+
+  <!-- ── PÁGINA NÃO SUPORTADA ───────────────────────── -->
+  <div id="screen-unsupported" class="screen hidden">
+    <div class="result-box">
+      <div class="warn-circle">!</div>
+      <p class="result-title">Página interna</p>
+      <p class="result-sub">Abra um site para salvar o link.</p>
     </div>
   </div>
 
