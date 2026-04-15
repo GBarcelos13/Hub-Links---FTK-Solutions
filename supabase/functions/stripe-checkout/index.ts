@@ -16,7 +16,19 @@ const env = (k: string) => Deno.env.get(k) ?? '';
 serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-  // Lidos a cada request para garantir que os secrets estão disponíveis
+  // Diagnóstico temporário — remover após validar
+  const url = new URL(req.url);
+  if (url.pathname.endsWith('/health')) {
+    return json({
+      stripe_key_set:    env('STRIPE_SECRET_KEY').length > 0,
+      price_pro_set:     env('STRIPE_PRICE_PRO').length > 0,
+      price_elite_set:   env('STRIPE_PRICE_ELITE').length > 0,
+      supabase_url_set:  env('SUPABASE_URL').length > 0,
+      anon_key_set:      env('SUPABASE_ANON_KEY').length > 0,
+      service_key_set:   env('SUPABASE_SERVICE_ROLE_KEY').length > 0,
+    });
+  }
+
   const stripe = new Stripe(env('STRIPE_SECRET_KEY'), { apiVersion: '2024-06-20' });
   const PRICE_MAP: Record<string, string> = {
     pro:   env('STRIPE_PRICE_PRO'),
