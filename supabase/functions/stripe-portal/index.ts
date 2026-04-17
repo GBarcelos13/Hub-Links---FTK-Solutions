@@ -11,27 +11,30 @@ import { corsHeaders } from '../_shared/cors.ts';
 
 // @ts-expect-error — Deno global
 const env = (k: string) => Deno.env.get(k) ?? '';
-const stripe = new Stripe(env('STRIPE_SECRET_KEY'), { apiVersion: '2024-06-20' });
 
 serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const origin = req.headers.get('origin');
+  const headers = corsHeaders(origin);
+  if (req.method === 'OPTIONS') return new Response('ok', { headers });
+
+  const stripe = new Stripe(env('STRIPE_SECRET_KEY'), { apiVersion: '2024-06-20' });
 
   try {
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) return json({ error: 'Missing Authorization' }, 401);
+    if (!authHeader) return json({ error: 'Missing Authorization' }, 401, headers);
 
     const supabase = createClient(env('SUPABASE_URL'), env('SUPABASE_ANON_KEY'), {
       global: { headers: { Authorization: authHeader } },
     });
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return json({ error: 'Unauthorized' }, 401);
+    if (!user) return json({ error: 'Unauthorized' }, 401, headers);
 
     const admin = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'));
     const { data: profile } = await admin
       .from('profiles').select('stripe_customer_id').eq('id', user.id).maybeSingle();
 
     if (!profile?.stripe_customer_id) {
-      return json({ error: 'No Stripe customer for this user' }, 400);
+      return json({ error: 'No Stripe customer for this user' }, 400, headers);
     }
 
     const portal = await stripe.billingPortal.sessions.create({
@@ -39,16 +42,16 @@ serve(async (req: Request) => {
       return_url: `${env('APP_URL')}/billing`,
     });
 
-    return json({ url: portal.url });
+    return json({ url: portal.url }, 200, headers);
   } catch (err) {
-    console.error(err);
-    return json({ error: (err as Error).message }, 500);
+    console.error('[stripe-portal] error:', err);
+    return json({ error: 'Internal server error' }, 500, headers);
   }
 });
 
-function json(body: unknown, status = 200) {
+function json(body: unknown, status = 200, hdrs: Record<string, string> = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...hdrs, 'Content-Type': 'application/json' },
   });
 }

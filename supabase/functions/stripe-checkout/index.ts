@@ -14,20 +14,9 @@ import { corsHeaders } from '../_shared/cors.ts';
 const env = (k: string) => Deno.env.get(k) ?? '';
 
 serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
-  // Diagnóstico temporário — remover após validar
-  const url = new URL(req.url);
-  if (url.pathname.endsWith('/health')) {
-    return json({
-      stripe_key_set:    env('STRIPE_SECRET_KEY').length > 0,
-      price_pro_set:     env('STRIPE_PRICE_PRO').length > 0,
-      price_elite_set:   env('STRIPE_PRICE_ELITE').length > 0,
-      supabase_url_set:  env('SUPABASE_URL').length > 0,
-      anon_key_set:      env('SUPABASE_ANON_KEY').length > 0,
-      service_key_set:   env('SUPABASE_SERVICE_ROLE_KEY').length > 0,
-    });
-  }
+  const origin = req.headers.get('origin');
+  const headers = corsHeaders(origin);
+  if (req.method === 'OPTIONS') return new Response('ok', { headers });
 
   const stripe = new Stripe(env('STRIPE_SECRET_KEY'), { apiVersion: '2024-06-20' });
   const PRICE_MAP: Record<string, string> = {
@@ -37,17 +26,17 @@ serve(async (req: Request) => {
 
   try {
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) return json({ error: 'Missing Authorization' }, 401);
+    if (!authHeader) return json({ error: 'Missing Authorization' }, 401, headers);
 
     const supabase = createClient(env('SUPABASE_URL'), env('SUPABASE_ANON_KEY'), {
       global: { headers: { Authorization: authHeader } },
     });
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return json({ error: 'Unauthorized' }, 401);
+    if (!user) return json({ error: 'Unauthorized' }, 401, headers);
 
     const { plan } = await req.json();
     const priceId = PRICE_MAP[plan];
-    if (!priceId) return json({ error: 'Invalid plan' }, 400);
+    if (!priceId) return json({ error: 'Invalid plan' }, 400, headers);
 
     // get or create Stripe customer
     const admin = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'));
@@ -76,16 +65,16 @@ serve(async (req: Request) => {
       subscription_data: { metadata: { supabase_user_id: user.id, plan } },
     });
 
-    return json({ url: session.url });
+    return json({ url: session.url }, 200, headers);
   } catch (err) {
-    console.error(err);
-    return json({ error: (err as Error).message }, 500);
+    console.error('[stripe-checkout] error:', err);
+    return json({ error: 'Internal server error' }, 500, headers);
   }
 });
 
-function json(body: unknown, status = 200) {
+function json(body: unknown, status = 200, hdrs: Record<string, string> = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...hdrs, 'Content-Type': 'application/json' },
   });
 }

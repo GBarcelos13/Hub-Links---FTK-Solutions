@@ -1,7 +1,9 @@
 import posthog from 'posthog-js';
 
 export function initPostHog() {
-  posthog.init('phc_D5H6jyLiPti5o9iyhv3EcS74RKNLWhgEQzsje6L3R4Kv', {
+  const key = import.meta.env.VITE_POSTHOG_KEY as string | undefined;
+  if (!key) return; // analytics disabled if key not set
+  posthog.init(key, {
     api_host: 'https://us.i.posthog.com',
     // Desabilita captura automática — faremos via useLocation para SPA
     capture_pageview: false,
