@@ -9,9 +9,9 @@ import { Sparkles, Link as LinkIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 const SEED_LINKS = [
-  { name: 'MEU SITE',  url: 'https://exemplo.com',        description: 'Página inicial', is_favorite: true  },
-  { name: 'INSTAGRAM', url: 'https://instagram.com',      description: 'Perfil oficial', is_favorite: false },
-  { name: 'CONTATO',   url: 'mailto:contato@exemplo.com', description: 'Fale comigo',    is_favorite: false },
+  { name: 'CHAT GPT',   url: 'https://chatgpt.com',       description: 'Assistente de IA', is_favorite: true  },
+  { name: 'CLAUDE',     url: 'https://claude.ai',          description: 'IA da Anthropic',  is_favorite: false },
+  { name: 'PERPLEXITY', url: 'https://perplexity.ai',      description: 'Busca com IA',     is_favorite: false },
 ];
 
 export function OnboardingDialog() {
