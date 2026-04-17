@@ -1,4 +1,6 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { posthog } from './lib/posthog';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -30,6 +32,15 @@ const queryClient = new QueryClient({
   },
 });
 
+// ── PostHog page tracker ─────────────────────────────────────────────
+function PostHogPageTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    posthog.capture('$pageview', { $current_url: window.location.href });
+  }, [location.pathname]);
+  return null;
+}
+
 // ── Helpers ──────────────────────────────────────────────────────────
 const PageLoader = () => (
   <div className="flex min-h-screen items-center justify-center bg-background">
@@ -47,6 +58,7 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <SupabaseAuthProvider>
+          <PostHogPageTracker />
           <TooltipProvider>
             <Toaster />
             <Sonner />
