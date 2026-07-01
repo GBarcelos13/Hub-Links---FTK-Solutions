@@ -1,42 +1,58 @@
-# HUB Links
+# 🔗 Hub Links — FTK Solutions
 
-Central privada de links de trabalho — organize ferramentas, IAs, docs e qualquer link num hub rápido e bonito.
+Hub de links personalizado com **autenticação, painel administrativo e integração com Stripe** — desenvolvido para a FTK Solutions como alternativa ao Linktree com controle total dos dados.
+
+🌐 **Demo ao vivo:** [hub-links-ftk-solutions.vercel.app](https://hub-links-ftk-solutions.vercel.app)
+
+## Funcionalidades
+
+- **Hub público** de links personalizados
+- **Painel admin** protegido por autenticação
+- **Gerenciamento de links** com drag-and-drop
+- **Integração Stripe** para funcionalidades premium
+- **Deploy automático** na Vercel
 
 ## Stack
 
-- React + Vite + TypeScript
-- Tailwind CSS + shadcn/ui
-- Supabase (Auth, Postgres, Realtime, Edge Functions)
-- Stripe (pagamentos e assinaturas)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe-008CDD?style=flat-square&logo=stripe&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 
-## Desenvolvimento local
+## Estrutura
 
-```sh
-# 1. Clone o repositório
+```
+src/
+├── pages/          # Auth, Dashboard, Admin
+├── components/     # UI components e rotas protegidas
+├── contexts/       # Auth e Links context
+├── hooks/          # Custom hooks para data fetching
+└── integrations/
+    └── supabase/   # Client e types gerados
+supabase/
+├── functions/      # Edge functions (Stripe checkout, webhook, portal)
+└── migrations/     # Schema versionado
+```
+
+## Como Rodar Localmente
+
+```bash
+# 1. Clone e instale dependências
 git clone https://github.com/GBarcelos13/Hub-Links---FTK-Solutions.git
 cd Hub-Links---FTK-Solutions
-
-# 2. Instale as dependências
 npm install
 
-# 3. Configure as variáveis de ambiente
+# 2. Configure variáveis de ambiente
 cp .env.example .env
-# Preencha os valores no .env
+# Preencha VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY
 
-# 4. Inicie o servidor de desenvolvimento
+# 3. Rode em desenvolvimento
 npm run dev
 ```
 
-## Variáveis de ambiente
+---
 
-Consulte `.env.example` para a lista completa de variáveis necessárias.
-
-## Extensão do navegador
-
-A pasta `browser-extension/` contém uma extensão Chrome/Edge para salvar links com 1 clique.
-
-**Instalar em modo desenvolvedor:**
-1. Abra `chrome://extensions`
-2. Ative o **Modo desenvolvedor**
-3. Clique em **Carregar sem compactação**
-4. Selecione a pasta `browser-extension/`
+Desenvolvido por [Gabriel Barcelos](https://www.linkedin.com/in/gabriel-barcelos-voip/) · [MUG Solutions](https://github.com/GBarcelos13)
